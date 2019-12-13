@@ -1,0 +1,523 @@
+<?php
+
+
+/**
+* Implements hook_init().
+*/
+function rapgrid_custom_init() {
+	drupal_add_js(drupal_get_path('module', 'rapgrid_custom') .'/rg-custom-script.js');
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function rapgrid_custom_menu() {
+	$items = array();
+
+	// The Leagues Overview Page
+	$items['leagues'] = array(
+		'title' => 'Battle Rap Leagues',
+		'description' => 'Landing page for League Overview Page',
+		'page callback' => 'league_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The Rappers Overview Page
+	$items['rappers'] = array(
+		'title' => 'Battle Rappers Directory',
+		'description' => 'Landing page for Rappers Overview Page',
+		'page callback' => 'rapper_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The PPV Overiview Page
+	$items['ppv'] = array(
+		'title' => 'On Demand Pay-Per-View Rap Battles',
+		'description' => 'Landing page for PPV Overview Page',
+		'page callback' => 'ppv_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The Events Overiview Page
+	$items['events'] = array(
+		'title' => 'Battle Rap Events From Around the World',
+		'description' => 'Landing page for Events',
+		'page callback' => 'events_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The All Rap Battles Overiview Page
+	$items['battles'] = array(
+		'title' => 'All Rap Battles Overview Page',
+		'description' => 'Landing page for Rap Battles',
+		'page callback' => 'battles_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The All Videos Overiview Page
+	$items['videos'] = array(
+		'title' => 'All Videos Overview Page',
+		'description' => 'Landing page for Videos Overview',
+		'page callback' => 'videos_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The Shop Marketplace Page
+	$items['shop'] = array(
+		'title' => 'Shop Rap Grid Marketplace',
+		'description' => 'Landing page for Marketplace',
+		'page callback' => 'shop_overview_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The Blog RSS
+	$items['feeds/rapgrid'] = array(
+		'title' => 'Rap Grid RSS',
+		'description' => 'Custom RSS of Rapgrid News',
+		'page callback' => 'feeds_rapgrid_page',
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+	);
+	// The Product Pricing Processor
+	$items['live/auth/ajax/%'] = array(
+		'title' => 'Video Stream Authorization',
+		'description' => 'Used only to establish WOWZA Auth Token.',
+		'page callback' => 'rapgrid_playback_token',
+		'page arguments' => array(3), // 1 is the wildcard in the URL
+		'access arguments' => array( 'access content'),
+		'type' => MENU_CALLBACK,
+		'file' => 'includes/wowza_auth.inc',
+	);
+  // Product data for live ppv overlay ad
+  $items['live/product/ajax/%'] = array(
+    'title' => 'Product JSON Data',
+    'description' => 'Used for ajax call to get product data to overlay on stream',
+    'page callback' => 'get_product_overlay_data',
+    'page arguments' => array(3), // 1 is the wildcard in the URL
+    'access arguments' => array( 'access content'),
+    'type' => MENU_CALLBACK
+  );
+	return $items;
+}
+/**
+ * Page Callback Functions from hook_menu
+ */
+// Leagues Overview Page Callback
+function league_overview_page() {
+	// Call theme() function, so that Drupal includes the custom-page.tpl.php template
+	return theme('leagues_overview_page');
+}
+
+// Rappers Overview Page Callback
+function rapper_overview_page() {
+	return theme('rapper_overview_page');
+}
+
+// PPV Overview Page Callback
+function ppv_overview_page() {
+	return theme('ppv_overview_page');
+}
+
+// Events Overview Page Callback
+function events_overview_page() {
+	return theme('events_overview_page');
+}
+
+// Rap Battles Overview Page Callback
+function battles_overview_page() {
+	return theme('battles_overview_page');
+}
+
+// All Videos Overview Page Callback
+function videos_overview_page() {
+	return theme('videos_overview_page');
+}
+
+// Shop Overview Page Callback
+function shop_overview_page() {
+	return theme('shop_overview_page');
+}
+
+// Rapgrid RSS Page Callback
+function feeds_rapgrid_page() {
+	return theme('feeds_rapgrid_page');
+}
+
+/*
+ * Implement hook_theme().
+ */
+function rapgrid_custom_theme(){
+	return array(
+		// THEME NOTE: Drupal will look for a file name using the defined theme key name
+		// and not the defined template file.
+		'leagues_overview_page' => array(
+			// file name will be leagues-page.tpl.php
+			'template' => 'templates/leagues-overview-page',
+		),
+		'rapper_overview_page' => array(
+			// file name will be rapper-overview-page.tpl.php
+			'template' => 'templates/rapper-overview-page',
+		),
+		'ppv_overview_page' => array(
+			// file name will be ppv-overview-page.tpl.php
+			'template' => 'templates/ppv-overview-page',
+		),
+		'events_overview_page' => array(
+			// file name will be events-overview-page.tpl.php
+			'template' => 'templates/events-overview-page',
+		),
+		'battles_overview_page' => array(
+			// file name will be battles-overview-page.tpl.php
+			'template' => 'templates/battles-overview-page',
+		),
+		'videos_overview_page' => array(
+			// file name will be videos-overview-page.tpl.php
+			'template' => 'templates/videos-overview-page',
+		),
+		'shop_overview_page' => array(
+			// file name will be shop-overview-page.tpl.php
+			'template' => 'templates/shop-overview-page',
+		),
+		'feeds_rapgrid_page' => array(
+			// file name will be shop-overview-page.tpl.php
+			'template' => 'templates/feeds-rapgrid-page',
+		),
+	);
+}
+
+
+# COMMON FUNCTIONS INCLUDE FILE
+
+
+function displayYouTubeVideoByUrl($videoUrl) {
+	$parts = parse_url($videoUrl);
+	parse_str($parts['query'], $query);
+	// Display just the YouTube ID
+	$youTubeID = $query['v'];
+
+	$output = '<div class="embed-container">
+                    <iframe src="https://www.youtube.com/embed/' . $youTubeID .'" frameborder="0\" allowfullscreen></iframe>
+                </div>';
+
+	print $output;
+}
+
+// Videos by provider
+function displayVideoByUrl($videoUrl, $provider) {
+	$parts = parse_url($videoUrl);
+	switch ($provider) {
+		case 'youtube':
+			parse_str($parts['query'], $query);
+			// Display just the YouTube ID
+			$youTubeID = $query['v'];
+
+			$output = '<div class="embed-container">
+                    <iframe src="https://www.youtube.com/embed/' . $youTubeID .'" frameborder="0\" allowfullscreen></iframe>
+                </div>';
+			break;
+		case 'vimeo':
+			// Display just the Vimeo ID
+			$vimeoID = (int) substr(parse_url($videoUrl, PHP_URL_PATH), 1);
+
+			$output = '<div class="embed-container">
+<iframe frameborder="0" scrolling="no" src="https://player.vimeo.com/video/' . $vimeoID .'" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                </div>';
+			break;
+	} // end the swicth
+
+
+
+	print $output;
+}
+
+// Get Last Video by League
+function leagueLastVideoUrl($nodeId) {
+	$last_battle_url = '';
+	$result = db_query("
+	SELECT node.nid AS nid,
+	node_data_field_battle_video.field_battle_video_embed AS vid_url,
+	node.type AS node_type,
+	node.vid AS node_vid
+	FROM node node
+	JOIN og_ancestry og_ancestry ON node.nid = og_ancestry.nid
+	JOIN content_type_rap_battle node_data_field_battle_video ON node.vid = node_data_field_battle_video.vid
+	JOIN content_field_battle_date ON node.vid = content_field_battle_date.vid
+	WHERE (node.type in ('league_video', 'rap_battle')) AND (node.status <> 0) AND (og_ancestry.group_nid = %d)
+	AND node.nid NOT IN (select nid from acl_node)
+	ORDER BY content_field_battle_date.field_battle_date_value DESC
+	LIMIT 1
+	", $nodeId
+	);
+
+	while($row = db_fetch_array($result))
+	{
+		$last_battle_url =  $row['vid_url'];
+	}
+
+	return $last_battle_url;
+}
+
+// Get latest Video by Rapper
+function rapperLastVideoUrl($nodeId) {
+	$last_battle_url = '';
+	$result = db_query("
+	 SELECT node.nid AS nid,
+	   node.title AS node_title,
+	   node_data_field_battle_video.field_battle_video_embed AS vid_url,
+	   node_data_field_battle_date.field_battle_date_value AS node_data_field_battle_date_field_battle_date_value
+	 FROM node node
+	 INNER JOIN content_field_battle_rappers node_data_field_battle_rappers ON node.vid = node_data_field_battle_rappers.vid
+	 LEFT JOIN content_type_rap_battle node_data_field_battle_video ON node.vid = node_data_field_battle_video.vid
+	 LEFT JOIN content_field_battle_date node_data_field_battle_date ON node.vid = node_data_field_battle_date.vid
+	 WHERE node.nid NOT IN (select nid from acl_node) AND (node.status = 1) AND (node.type in ('league_video','rap_battle')) AND (node_data_field_battle_rappers.field_battle_rappers_nid = %d)
+	   ORDER BY node_data_field_battle_date_field_battle_date_value DESC
+	 LIMIT 1
+    ", $nodeId
+	);
+
+	while($row = db_fetch_array($result))
+	{
+		$last_battle_url =  $row['vid_url'];
+	}
+	return $last_battle_url;
+}
+
+
+function get_rap_battle_img($nid){
+	$limit_value = $limit_value * 2;
+	$sql = "
+	SELECT field_battle_video_data
+	FROM content_type_rap_battle
+	where nid = $nid
+        ";
+
+	$result = db_query($sql, arg(1));
+	$row = db_fetch_array($result);
+	$array = unserialize($row['field_battle_video_data']);
+
+	return $array;
+}
+
+
+function print_league_battles($league_id, $limit_value, $offset=null){
+	$limit_value = $limit_value * 2;
+	if($offset){
+		$limit_clause = "LIMIT " . $offset*2 . ", $limit_value";
+	}else{
+		$limit_clause = "LIMIT $limit_value";
+	}
+	$sql = "
+	select
+	  node.nid as battle_node_id,
+	  artist.nid as artist_profile_node_id,
+	  artist.title as artist_name
+	from node node
+	JOIN og_ancestry og_ancestry ON node.nid = og_ancestry.nid
+	JOIN content_field_battle_rappers field_battle_rappers ON node.vid = field_battle_rappers.vid
+	JOIN node as artist on artist.nid = field_battle_rappers.field_battle_rappers_nid
+	JOIN content_field_battle_date ON node.vid = content_field_battle_date.vid
+	JOIN content_type_rap_battle parent ON node.vid = parent.vid
+	WHERE
+	  (node.status <> 0)
+	  AND (og_ancestry.group_nid = $league_id)
+	  AND node.type = 'rap_battle'
+	  AND parent.field_parent_node_nid IS NULL
+	ORDER BY content_field_battle_date.field_battle_date_value DESC, node.nid
+	$limit_clause
+	";
+
+	$result = db_query($sql, arg(1));
+	$x = 0;
+	echo "<ul>";
+	while($row = db_fetch_array($result))
+	{
+		if($x==0){
+			echo '<li><a href=/node/' . $row['battle_node_id'] . '>' . $row['artist_name'] . ' vs ';
+			$x = $x + 1;
+		}else{
+			echo $row['artist_name'] . '</a></li>';
+			$x = 0;
+		}
+	}
+	echo "</ul>";
+
+
+}
+
+function print_artist_battles($artist_id, $limit_value, $offset=null){
+	if($offset){
+		$limit_clause = "LIMIT " . $offset*2 . ", $limit_value";
+	}else{
+		$limit_clause = "LIMIT $limit_value";
+	}
+
+	$sql = "
+	select
+	  node.nid as battle_node_id,
+	  artist.nid as artist_profile_node_id,
+	  artist.title as artist_name
+	FROM node node
+	  JOIN content_field_battle_rappers field_battle_rappers ON node.vid = field_battle_rappers.vid
+	  JOIN node as artist on artist.nid = field_battle_rappers.field_battle_rappers_nid
+	  JOIN content_field_battle_date ON node.vid = content_field_battle_date.vid
+	  JOIN content_field_battle_rappers rapper_filter ON node.vid = rapper_filter.vid
+	  JOIN content_type_rap_battle parent ON node.vid = parent.vid
+	WHERE
+	  (node.status <> 0)
+	  AND node.type = 'rap_battle'
+	  AND rapper_filter.field_battle_rappers_nid = $artist_id
+	  AND artist.nid <> $artist_id
+	  AND parent.field_parent_node_nid IS NULL
+	ORDER BY content_field_battle_date.field_battle_date_value DESC, node.nid
+	LIMIT $limit_value
+        ";
+
+	$result = db_query($sql, arg(1));
+	echo "<ul>";
+	while($row = db_fetch_array($result))
+	{
+		echo '<li><a href='. base_path() .'node/' . $row['battle_node_id'] . '>vs ' . $row['artist_name'] . '</a></li>';
+	}
+	echo "</ul>";
+
+
+}
+
+function print_event_battles($event_id){
+        $sql = "
+	SELECT 
+	  node.nid battle_nid,
+	  node.title battle_title,
+	  lnid.nid left_rapper_nid,
+	  lnid.title left_rapper,
+	  rnid.nid right_rapper_nid,
+	  rnid.title right_rapper
+	FROM node node 
+	LEFT JOIN content_field_battle_event_ref node_data_field_battle_event_ref ON node.vid = node_data_field_battle_event_ref.vid
+	LEFT JOIN content_field_battle_rappers lrap ON lrap.delta = 0 AND lrap.nid = node.nid
+	LEFT JOIN node lnid ON lrap.field_battle_rappers_nid = lnid.nid
+	LEFT JOIN content_field_battle_rappers rrap ON rrap.delta = 1 AND rrap.nid = node.nid
+	LEFT JOIN node rnid ON rrap.field_battle_rappers_nid = rnid.nid
+	WHERE (node.type in ('rap_battle')) 
+	AND (node_data_field_battle_event_ref.field_battle_event_ref_nid = $event_id ) # Event Node ID
+        ";
+        $result = db_query($sql, arg(1));
+        echo "<ul class='live-event-battles-list'>";
+        while($row = db_fetch_array($result))
+        {
+            echo '<input type="hidden" id="' . $row['battle_nid'] . '_0" value="' . $row['left_rapper_nid'] . '">';
+            echo '<input type="hidden" id="' . $row['battle_nid'] . '_0_name" value="' . $row['left_rapper'] . '">';
+            echo '<input type="hidden" id="' . $row['battle_nid'] . '_1" value="' . $row['right_rapper_nid'] . '">';
+            echo '<input type="hidden" id="' . $row['battle_nid'] . '_1_name" value="' . $row['right_rapper'] . '">';
+            echo '<li id="event_battle_' . $row['battle_nid'] . '">' . $row['left_rapper'] . ' vs ' . $row['right_rapper'] . '</li>';
+        }
+        echo "</ul>";
+}
+
+// Get a list of Node Ids That a Customer Purchased
+
+function purchasedEvents($userId) {
+	//Start an array to hold the nids the user is allowed to access.
+	$output = array();
+	$sql = "
+		  select n.nid
+		  from acl_node n
+		  join acl_user u on n.acl_id = u.acl_id
+		  join acl on n.acl_id = acl.acl_id
+		  where acl.module = 'content_access'
+		  and acl.name like 'view%'
+		  and u.uid=$userId ";
+
+	$results = db_query($sql);
+	if (mysql_num_rows($results) > 1) {
+		while ($data = db_fetch_object($results) ) {
+			// Render the Node as Teaser
+			$node = node_load($data->nid);
+			print '<div class="views-row">';
+			print node_view($node, 'teaser');
+			print '</div>';
+		}
+	} else {
+		echo '<p>You have not purchased any Pay-Per-View videos yet.</p>';
+	}
+
+}
+
+// Event Access Purchase Options
+
+function eventAccess($uid, $prodRef) {
+	$sql = "select
+	 pf.nid,
+	 acl_user.uid
+	from uc_product_features pf
+	join uc_node_access_products ucnap on pf.pfid = ucnap.pfid
+	join acl_node on ucnap.access_nid = acl_node.nid and acl_node.grant_view = 1
+	join acl_user on acl_node.acl_id = acl_user.acl_id
+	where pf.nid = $prodRef
+	and acl_user.uid = $uid
+	limit 1";
+
+	$results = db_query($sql);
+	if (mysql_num_rows($results) > 0) {
+		print '<a class="btn btn1 purchased">Already Purchased</a>';
+	} else {
+		print '<a class="btn btn1"  href="' . base_path() . 'cart/add/p' . $prodRef . '_q1-pay_per_view?destination=cart">Purchase Now</a>';
+	}
+}
+
+// Paypal email for captions on Live PPV
+function rapgrid_paypal_email($userId, $nid){
+  $sql = "
+   SELECT
+     coalesce(uc_payment_paypal_ipn.payer_email, users.mail) as payer_email
+   FROM uc_orders uc_orders
+   JOIN uc_payment_paypal_ipn ON uc_orders.order_id = uc_payment_paypal_ipn.order_id
+   JOIN uc_order_products  ON uc_orders.order_id = uc_order_products.order_id
+   JOIN uc_product_features on uc_order_products.nid = uc_product_features.nid
+   JOIN uc_node_access_products ucnap on uc_product_features.pfid = ucnap.pfid
+   join acl_node on ucnap.access_nid = acl_node.nid and acl_node.grant_view = 1
+   join acl_user on acl_node.acl_id = acl_user.acl_id and uc_orders.uid = acl_user.uid
+   join users on uc_orders.uid = users.uid
+   WHERE uc_orders.uid = $userId
+     and acl_node.nid = $nid
+   LIMIT 1";
+
+  $results = db_query($sql, arg(1));
+  if (mysql_num_rows($results) > 0) {
+    $data = db_fetch_array($results);
+    return $data['payer_email'];
+    //return kpr($results);
+  } else {
+    return "user id: $userId";
+  }
+}
+function get_product_overlay_data($nid){
+  $sql = "
+    SELECT n.nid, n.title, n.type, p.sell_price, REPLACE(f.filepath, 'sites/default/files', 'sites/default/files/imagecache/live_product_overlay') as image_path
+    FROM node n
+    JOIN uc_products p on n.nid = p.nid
+    JOIN content_field_image_cache i on n.nid = i.nid
+    JOIN files f on i.field_image_cache_fid = f.fid 
+    WHERE 
+      n.nid = $nid
+    LIMIT 1
+  ";
+
+  $results = db_query($sql, arg(1));
+  if (mysql_num_rows($results) > 0) {
+    $data = db_fetch_array($results);
+    return drupal_json($data);
+    //return kpr($results);
+  } else {
+    return null;
+  }
+}
+
+/* ***************************************** */
+/* INCLUDES                                  */
+/* ***************************************** */
+
+// A registry of variable_get defaults.
+include_once('includes/wowza_auth.inc');
+
+

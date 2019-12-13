@@ -1,0 +1,5 @@
+; $Id: rapgrid_custom.info,v 1.0
+name = Rapgrid Custom Functions
+description = Custom module edits for rapgrid.com
+core = 6.x
+package = Rap Grid Custom Modules
